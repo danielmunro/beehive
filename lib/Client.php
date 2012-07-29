@@ -1,38 +1,13 @@
 <?php
 namespace Beehive;
 
-class Client
+interface Client
 {
-	protected $id = '';
-	protected $connection = null;
-	protected $buffer = null;
-	protected $input_buffer = [];
-	protected $last_input = '';
-	
-	public function __construct($id, $connection, $buffer)
-	{
-		$this->id = $id;
-		$this->connection = $connection;
-		$this->buffer = $buffer;
-	}
+	public function __construct(Server $server, $id, $connection, $buffer);
 
-	public function getConnection()
-	{
-		return $this->connection;
-	}
+	public function getID();
 
-	public function getBuffer()
-	{
-		return $this->buffer;
-	}
-	
-	public function getLastInput()
-	{
-		return $this->last_input;
-	}
+	public function getConnection();
 
-	public function pushInputBuffer($message)
-	{
-		$this->input_buffer[] = $message;
-	}
+	public function getBuffer();
 }
