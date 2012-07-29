@@ -1,7 +1,7 @@
 beehive
 =======
 
-Beehive is an event-driven socket server powered by libevent and implemented in PHP with OO-design principles.
+Beehive is an event-driven socket server powered by libevent and implemented in PHP (requires libevent and PHP 5.4).
 
 how to run
 ==========
