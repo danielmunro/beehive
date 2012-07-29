@@ -8,12 +8,11 @@ class Telnet implements \Beehive\Client
 	protected $connection = null;
 	protected $buffer = null;
 	
-	public function __construct(\Beehive\Server $server, $id, $connection, $buffer)
+	public function __construct(\Beehive\Server $server, $id, $connection)
 	{
 		$this->server = $server;
 		$this->id = $id;
 		$this->connection = $connection;
-		$this->buffer = $buffer;
 	}
 
 	public function getID()
@@ -26,8 +25,18 @@ class Telnet implements \Beehive\Client
 		return $this->connection;
 	}
 
+	public function setBuffer($buffer)
+	{
+		$this->buffer = $buffer;
+	}
+
 	public function getBuffer()
 	{
 		return $this->buffer;
+	}
+
+	public function wrote($message)
+	{
+		return $message;
 	}
 }
