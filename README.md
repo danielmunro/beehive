@@ -14,4 +14,4 @@ Open a new terminal, and type:
 
 >telnet localhost 9000
 
-The client is now connected to the server. The server will accept incoming messages over telnet and will relay them to the client. In the current implementation, the client does nothing with the input.
+The client is now connected to the server. The server will accept incoming messages over telnet and will relay them to the client. In the example implementation (the server default) the input is just echo'd back to the client.
