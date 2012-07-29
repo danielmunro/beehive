@@ -100,6 +100,6 @@ class Server
 
 	public function __toString()
 	{
-		return $this->host.':'.$this->port;
+		return '[beehive:'.$this->host.':'.$this->port.']';
 	}
 }
