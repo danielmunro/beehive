@@ -39,4 +39,9 @@ class Telnet implements \Beehive\Client
 	{
 		return $message;
 	}
+
+	public function write($message)
+	{
+		event_buffer_write($this->buffer, $message, strlen($message));
+	}
 }

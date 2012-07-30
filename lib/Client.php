@@ -14,4 +14,6 @@ interface Client
 	public function getBuffer();
 
 	public function wrote($message);
+	
+	public function write($message);
 }

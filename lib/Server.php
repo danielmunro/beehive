@@ -8,6 +8,8 @@ class Server
 	protected $client_type = '';
 	protected $connection = null;
 	protected $read_callback = null;
+	protected $connect_callback = null;
+	protected $event_base = null;
 
 	const CONNECTION_TIMEOUT = 1200;
 	const EVENT_PRIORITY = 1;
@@ -17,11 +19,18 @@ class Server
 	{
 		$this->host = $host;
 		$this->port = $port;
+
+		$this->event_base = event_base_new();
 	}
 
 	public function setClientType($client_type)
 	{
 		$this->client_type = $client_type;
+	}
+
+	public function setConnectCallback(callable $callback)
+	{
+		$this->connect_callback = $callback;
 	}
 
 	public function setReadCallback(callable $callback)
@@ -40,12 +49,11 @@ class Server
 
 		$this->connection = stream_socket_server('tcp://'.$this->host.':'.$this->port, $errno, $errstr);
 		stream_set_blocking($this->connection, 0);
-		$base = event_base_new();
 		$event = event_new();
-		event_set($event, $this->connection, EV_READ | EV_PERSIST, [$this, 'addClient'], $base);
-		event_base_set($event, $base);
+		event_set($event, $this->connection, EV_READ | EV_PERSIST, [$this, 'addClient'], $this->event_base);
+		event_base_set($event, $this->event_base);
 		event_add($event);
-		event_base_loop($base);
+		event_base_loop($this->event_base);
 	}
 	
 	protected function addClient($socket, $flag, $base)
@@ -63,6 +71,9 @@ class Server
 		event_buffer_priority_set($buffer, self::EVENT_PRIORITY);
 		event_buffer_enable($buffer, EV_READ | EV_PERSIST);
 		$client->setBuffer($buffer);
+		if($this->connect_callback) {
+			call_user_func_array($this->connect_callback, [$client]);
+		}
 	}
 
 	protected function read($buffer, Client $client)
@@ -71,17 +82,12 @@ class Server
 		call_user_func_array($this->read_callback, [$client, $client->wrote($message)]);
 	}
 
-	public function write(Client $client, $message)
-	{
-		event_buffer_write($client->getBuffer(), $message, strlen($message));
-	}
-
 	protected function error($buffer, $error, Client $client)
 	{
 		$this->removeClient($client);
 	}
 	
-	protected function removeClient(Client $client)
+	public function removeClient(Client $client)
 	{
 		$buf = $client->getBuffer();
 		$conn = $client->getConnection();
