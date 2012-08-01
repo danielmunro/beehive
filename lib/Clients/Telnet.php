@@ -35,7 +35,11 @@ class Telnet implements \Beehive\Client
 		return $this->buffer;
 	}
 
-	public function wrote($message)
+	public function handshake($headers)
+	{
+	}
+
+	public function decodeIncoming($message)
 	{
 		return $message;
 	}

@@ -13,7 +13,9 @@ interface Client
 
 	public function getBuffer();
 
-	public function wrote($message);
+	public function handshake($headers);
+
+	public function decodeIncoming($message);
 	
 	public function write($message);
 }

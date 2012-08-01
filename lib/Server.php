@@ -9,6 +9,7 @@ class Server
 	protected $connection = null;
 	protected $read_callback = null;
 	protected $connect_callback = null;
+	protected $disconnect_callback = null;
 	protected $event_base = null;
 
 	const CONNECTION_TIMEOUT = 1200;
@@ -23,6 +24,16 @@ class Server
 		$this->event_base = event_base_new();
 	}
 
+	public function getHost()
+	{
+		return $this->host;
+	}
+
+	public function getPort()
+	{
+		return $this->port;
+	}
+
 	public function setClientType($client_type)
 	{
 		$this->client_type = $client_type;
@@ -31,6 +42,11 @@ class Server
 	public function setConnectCallback(callable $callback)
 	{
 		$this->connect_callback = $callback;
+	}
+
+	public function setDisconnectCallback(callable $callback)
+	{
+		$this->disconnect_callback = $callback;
 	}
 
 	public function setReadCallback(callable $callback)
@@ -79,7 +95,7 @@ class Server
 	protected function read($buffer, Client $client)
 	{
 		$message = trim(event_buffer_read($buffer, self::MAX_READ_LENGTH));
-		call_user_func_array($this->read_callback, [$client, $client->wrote($message)]);
+		call_user_func_array($this->read_callback, [$client, $client->decodeIncoming($message)]);
 	}
 
 	protected function error($buffer, $error, Client $client)
@@ -89,6 +105,9 @@ class Server
 	
 	public function removeClient(Client $client)
 	{
+		if($this->disconnect_callback) {
+			call_user_func_array($this->disconnect_callback, [$client]);
+		}
 		$buf = $client->getBuffer();
 		$conn = $client->getConnection();
 
