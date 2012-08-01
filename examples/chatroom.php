@@ -1,6 +1,6 @@
 <?php
 
-require_once('../autoloader.php');
+require_once(__DIR__.'/../autoloader.php');
 
 $beehive = new Beehive\Server('127.0.0.1', 9000);
 $beehive->setClientType('\Beehive\Clients\Telnet');
@@ -13,5 +13,9 @@ $beehive->setReadCallback(function($sender, $input) use ($beehive, &$clients) {
 	foreach($clients as $client) {
 		$client->write('[client '.$sender->getID()."] ".$input."\r\n");
 	}
+});
+$beehive->setDisconnectCallback(function($client) use (&$clients) {
+	$i = array_search($client, $clients);
+	unset($clients[$i]);
 });
 $beehive->listen();
