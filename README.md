@@ -6,12 +6,16 @@ Beehive is an event-driven socket server powered by libevent and implemented in 
 how to run
 ==========
 
-In one terminal, enter:
+#Telnet echo server#
 
->php example.php
+In one terminal, type:
+
+>php examples/telnet.php
+
+Beehive will now be listening on 127.0.0.1:9000
 
 Open a new terminal, and type:
 
 >telnet localhost 9000
 
-The client is now connected to the server. The server will accept incoming messages over telnet and will relay them to the client. In the example implementation (the server default) the input is just echo'd back to the client.
+The server will echo any messages sent to it.
