@@ -7,6 +7,7 @@ class Telnet implements \Beehive\Client
 	protected $server = null;
 	protected $connection = null;
 	protected $buffer = null;
+	protected $handshake = false;
 	
 	public function __construct(\Beehive\Server $server, $id, $connection)
 	{
@@ -37,6 +38,12 @@ class Telnet implements \Beehive\Client
 
 	public function handshake($headers)
 	{
+		return $this->handshake = true;
+	}
+
+	public function getHandshake()
+	{
+		return $this->handshake;
 	}
 
 	public function decodeIncoming($message)

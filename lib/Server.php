@@ -87,14 +87,16 @@ class Server
 		event_buffer_priority_set($buffer, self::EVENT_PRIORITY);
 		event_buffer_enable($buffer, EV_READ | EV_PERSIST);
 		$client->setBuffer($buffer);
-		if($this->connect_callback) {
-			call_user_func_array($this->connect_callback, [$client]);
-		}
 	}
 
 	protected function read($buffer, Client $client)
 	{
 		$message = trim(event_buffer_read($buffer, self::MAX_READ_LENGTH));
+		if(!$client->getHandshake()) {
+			if($client->handshake($message) && $this->connect_callback) {
+				call_user_func_array($this->connect_callback, [$client]);
+			}
+		}
 		call_user_func_array($this->read_callback, [$client, $client->decodeIncoming($message)]);
 	}
 

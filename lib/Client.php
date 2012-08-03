@@ -15,6 +15,8 @@ interface Client
 
 	public function handshake($headers);
 
+	public function getHandshake();
+
 	public function decodeIncoming($message);
 	
 	public function write($message);

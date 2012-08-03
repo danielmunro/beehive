@@ -1,13 +1,18 @@
 <?php
 namespace Beehive\Clients;
 
-class WebSocketHybi10 implements \Beehive\Client
+class WebSocketHybi10 implements \Beehive\Client, \jsonSerializable
 {
 	protected $id = '';
 	protected $server = null;
 	protected $connection = null;
 	protected $buffer = null;
 	protected $handshake = false;
+
+	public function jsonSerialize()
+	{
+		return ['id' => $this->id];
+	}
 
 	public function __construct(\Beehive\Server $server, $id, $connection)
 	{
@@ -38,9 +43,6 @@ class WebSocketHybi10 implements \Beehive\Client
 
 	public function decodeIncoming($message)
 	{
-		if(!$this->handshake) {
-			$this->handshake($message);
-		}
 		$wrote = self::_hybi10DecodeData($message);
 		return $wrote;
 	}
@@ -49,6 +51,11 @@ class WebSocketHybi10 implements \Beehive\Client
 	{
 		$data = self::_hybi10EncodeData($message);
 		event_buffer_write($this->buffer, $data, strlen($data));
+	}
+
+	public function getHandshake()
+	{
+		return $this->handshake;
 	}
 
 	public function handshake($headers)
@@ -62,14 +69,14 @@ class WebSocketHybi10 implements \Beehive\Client
 				}
 			}
 		};
-		$upgrade = "HTTP/1.1 101 Switching Protocols\r\n" .
+		$this->handshake = "HTTP/1.1 101 Switching Protocols\r\n" .
 		"Upgrade: websocket\r\n" .
 		"Connection: Upgrade\r\n" .
 		"WebSocket-Origin: http://localhost\r\n" .
 		"WebSocket-Location: ws://localhost:".$this->server->getPort()."\r\n" .
 		"Sec-WebSocket-Accept: ".base64_encode(pack('H*', sha1($fnSockKey($headers)."258EAFA5-E914-47DA-95CA-C5AB0DC85B11")))."\r\n\r\n";
-		event_buffer_write($this->buffer, $upgrade, strlen($upgrade));
-		$this->handshake = true;
+		event_buffer_write($this->buffer, $this->handshake, strlen($this->handshake));
+		return true;
 	}
 
 	protected function _hybi10EncodeData($data)
