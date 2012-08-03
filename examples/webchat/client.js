@@ -33,11 +33,13 @@ function info(message) {
 }
 
 function updateClientList() {
-	$clientcount.html(clients.length+' '+(clients.length === 1 ? 'client':'clients'));
 	$clientlist.html('');
+	var count = 0;
 	for(i in clients) {
 		$clientlist.append('client '+clients[i].id+'<br />');
+		count++;
 	}
+	$clientcount.html(count+' '+(count === 1 ? 'client':'clients'));
 }
 
 function initSock(fn) {
