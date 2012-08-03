@@ -64,8 +64,7 @@ function initSock(fn) {
 				updateClientList();
 				break;
 			case 'clientRemoved':
-				var i = clients.indexOf(recvd.client);
-				clients.splice(i, 1);
+				delete clients[recvd.client.id];
 				updateClientList();
 				break;
 			case 'clientList':
