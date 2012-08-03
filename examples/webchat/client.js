@@ -1,8 +1,10 @@
-var sock, $out, $input;
+var sock, $out, $input, $clientcount, $clientlist, clients = [];
 
 $(function() {
 	$input = $("#input");
 	$out = $('#out');
+	$clientcount = $('#client-count');
+	$clientlist = $('#client-list');
 	$input.bind('keydown', checkForSubmit);
 	initSock();
 });
@@ -15,25 +17,65 @@ function checkForSubmit(e) {
 	}
 }
 
-function out(data) {
-	if(data.client && data.message) {
-		$out.append('[client '+data.client.substr(0, 4)+'...] '+data.message.replace(/\n/, '<br />'));
+function out(sender, message) {
+		$out.append('['+sender+'] '+message);
 		$out.scrollTop($out[0].scrollHeight);
+}
+
+function client(data) {
+	if(data.client && data.message) {
+		out('client '+data.client.substr(0, 4)+'...', data.message.replace(/\n/, '<br />'));
+	}
+}
+
+function info(message) {
+	out('info', message+'<br />');
+}
+
+function updateClientList() {
+	$clientcount.html(clients.length+' '+(clients.length === 1 ? 'client':'clients'));
+	$clientlist.html('');
+	for(var i = 0; i < clients.length; i++) {
+		$clientlist.append('client '+clients[i].id+'<br />');
 	}
 }
 
 function initSock(fn) {
+
+	info('opening connection');
 	sock = new WebSocket("ws://127.0.0.1:9000");
 	
 	sock.onopen = function() {
 		input.focus();
+		info('connection established');
 	};
 	
 	sock.onmessage = function(m) {
-		out(eval('('+m.data+')'));
+		console.log('incoming: '+m.data);
+		var recvd = (eval('('+m.data+')'));
+		switch(recvd.action) {
+			case 'client':
+				client(recvd);
+				break;
+			case 'clientAdded':
+				clients.push(recvd.client);
+				updateClientList();
+				break;
+			case 'clientRemoved':
+				var i = clients.indexOf(recvd.client);
+				clients.splice(i, 1);
+				updateClientList();
+				break;
+			case 'clientList':
+				clients = recvd.clients;
+				updateClientList();
+				break;
+			default:
+				console.log('[ignored] '+m.data);
+		}
 	};
 	
 	sock.onclose = function() {
-		out('Connection closed.');
+		info('connection closed');
 	};
 }
