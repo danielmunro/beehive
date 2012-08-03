@@ -35,7 +35,7 @@ function info(message) {
 function updateClientList() {
 	$clientcount.html(clients.length+' '+(clients.length === 1 ? 'client':'clients'));
 	$clientlist.html('');
-	for(var i = 0; i < clients.length; i++) {
+	for(i in clients) {
 		$clientlist.append('client '+clients[i].id+'<br />');
 	}
 }
