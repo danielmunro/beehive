@@ -60,7 +60,7 @@ function initSock(fn) {
 				client(recvd);
 				break;
 			case 'clientAdded':
-				clients.push(recvd.client);
+				clients[recvd.client.id] = recvd.client;
 				updateClientList();
 				break;
 			case 'clientRemoved':
