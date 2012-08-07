@@ -9,10 +9,6 @@ interface Client
 
 	public function getConnection();
 
-	public function setBuffer($buffer);
-
-	public function getBuffer();
-
 	public function handshake($headers);
 
 	public function getHandshake();
