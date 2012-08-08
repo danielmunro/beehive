@@ -1,5 +1,5 @@
-Phud - a PHP implementation of the popular multi-user dungeon game paradigm.
-Copyright (C) 2009 Dan Munro
+Beehive is a socket server implemented in php
+Copyright (C) 2012 Dan Munro
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,4 +17,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 Contact Dan Munro at dan@danmunro.com
 @author Dan Munro
-@package Phud
+@package Beehive
