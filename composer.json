@@ -1,0 +1,13 @@
+{
+    "minimum-stability": "dev",
+    "name": "danielmunro/beehive",
+    "description": "An event-driven socket server powered by libevent.",
+    "authors": [
+        {
+            "name": "Dan Munro",
+            "email": "dan@danmunro.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
